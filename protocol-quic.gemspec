@@ -22,5 +22,7 @@ Gem::Specification.new do |spec|
 	
 	spec.required_ruby_version = ">= 2.7"
 	
+	spec.add_dependency "ffi-native", "~> 0.4.0"
+	
 	spec.add_development_dependency "sus", "~> 0.18"
 end

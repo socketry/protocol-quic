@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
 	spec.files = Dir['{ext,lib}/**/*', '*.md', base: __dir__]
 	spec.require_paths = ['lib']
 	
-	spec.extensions = ["ext/ngtcp2/CMakeLists.txt"]
+	spec.extensions = ["ext/ngtcp2/CMakeLists.txt", "ext/protocol/quic/extconf.rb"]
 	
 	spec.required_ruby_version = ">= 2.7"
 	

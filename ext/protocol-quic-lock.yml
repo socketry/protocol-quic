@@ -1,0 +1,43 @@
+---
+platforms:
+  :commit: 53bfdd34201790980ba8f4c335dbf659d038eb06
+  :branch: master
+build-make:
+  :commit: 50998307f3d1f462c2bda1999b42b2ea8aeb4b15
+  :branch: master
+build-cmake:
+  :commit: 6558fdad5bbb475f0fa5584ff773de8f12ff232e
+  :branch: master
+picotls:
+  :commit: 17c17aef525181a4c82101832b0692b1a0e814b0
+  :branch: main
+variants:
+  :commit: f6a26a8ac3a47a23a213cbd15da2183239d394d1
+  :branch: master
+platform-linux:
+  :commit: 3619b22cfc66fd0691a8e747d1c5d445ac4cb9a6
+  :branch: master
+build-clang:
+  :commit: 89942e92e5ac6ffb10faa9cd2d4858903bd28d4f
+  :branch: master
+build-linux:
+  :commit: 1d9e9a5ade9b5817dd9f5c2cb4f5f43883a64c66
+  :branch: master
+build-files:
+  :commit: 2e5392ef4e171885b621288c7829e5160f1255bf
+  :branch: master
+executor-unix:
+  :commit: 36fe76d003e45c97cfb1d9d2726c17a33f28cad5
+  :branch: master
+executor-lldb:
+  :commit: 75f65ccadcf08aaed5694870c31556fbd656427a
+  :branch: master
+ngtcp2:
+  :commit: 0b78b2bd94ba21cb1ebcf38e45bf04df6f94529d
+  :branch: main
+generate-cpp-class:
+  :commit: b8996bd1404904a737b76d6893fc9f9bf78da540
+  :branch: master
+generate-template:
+  :commit: ad0dcfb6da64cc0508b71916b30e1050c82ecea7
+  :branch: master

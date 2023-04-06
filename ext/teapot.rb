@@ -9,26 +9,11 @@ define_project "protocol-quic" do |project|
 	project.license = "MIT License"
 end
 
-define_target "ruby" do |target|
-	target.provides "Platform/ruby" do
-		append header_search_paths [
-			Build::Files::Path.new(RbConfig::CONFIG['rubyarchhdrdir']),
-			Build::Files::Path.new(RbConfig::CONFIG['rubyhdrdir']),
-		]
-		
-		ruby_library_directory = ENV.fetch('RUBYLIBDIR') do
-			File.expand_path("../lib", __dir__)
-		end
-		
-		ruby_install_path Build::Files::Path.new(ruby_library_directory)
-	end
-end
-
 define_target "protocol-quic" do |target|
 	target.depends :platform
 	
 	target.depends "Library/nghttp3"
-	target.depends "Platform/ruby"
+	target.depends "Library/ruby"
 	
 	target.depends "Language/C99"
 	target.depends "Build/Files"
@@ -51,6 +36,7 @@ define_configuration "protocol-quic" do |configuration|
 	configuration.require "build-cmake"
 	
 	configuration.require "nghttp3"
+	configuration.require "ruby"
 	
 	configuration.require "generate-template"
 	configuration.require "generate-cpp-class"

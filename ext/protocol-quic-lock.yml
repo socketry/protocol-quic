@@ -9,7 +9,7 @@ build-cmake:
   :commit: 6558fdad5bbb475f0fa5584ff773de8f12ff232e
   :branch: master
 picotls:
-  :commit: 17c17aef525181a4c82101832b0692b1a0e814b0
+  :commit: 524b50584efeff8ae7c681be8a8c29c02fb4020b
   :branch: main
 variants:
   :commit: f6a26a8ac3a47a23a213cbd15da2183239d394d1
@@ -18,7 +18,7 @@ platform-linux:
   :commit: 3619b22cfc66fd0691a8e747d1c5d445ac4cb9a6
   :branch: master
 build-clang:
-  :commit: 89942e92e5ac6ffb10faa9cd2d4858903bd28d4f
+  :commit: 6fe17e26ac3c9dcce62c4d939e41404583280701
   :branch: master
 build-linux:
   :commit: 1d9e9a5ade9b5817dd9f5c2cb4f5f43883a64c66
@@ -33,7 +33,7 @@ executor-lldb:
   :commit: 75f65ccadcf08aaed5694870c31556fbd656427a
   :branch: master
 ngtcp2:
-  :commit: 0b78b2bd94ba21cb1ebcf38e45bf04df6f94529d
+  :commit: 5ab6a1e25448ac4a8687aedea402c055cf401171
   :branch: main
 generate-cpp-class:
   :commit: b8996bd1404904a737b76d6893fc9f9bf78da540
@@ -41,3 +41,21 @@ generate-cpp-class:
 generate-template:
   :commit: ad0dcfb6da64cc0508b71916b30e1050c82ecea7
   :branch: master
+nghttp3:
+  :commit: 735fd39749ec5efbaae9de62fa78538c09007b7c
+  :branch: main
+platform-darwin-osx:
+  :commit: b3abd55300d433236f97f3450fe05cab7c865214
+  :branch: master
+platform-darwin-ios:
+  :commit: c81ccc5ee73cb1c6ae31e378148c4cb8c9f8759e
+  :branch: master
+build-darwin:
+  :commit: 4dce329501f49a3f2a4c480a72767ef823f95e37
+  :branch: master
+ruby:
+  :commit: b7f01a474992ec1c0f3033fee2b9e61fe438f1e3
+  :branch: main
+openssl:
+  :commit: 2f48d686aaaf20dc6d7e8a277803657eb5951530
+  :branch: main

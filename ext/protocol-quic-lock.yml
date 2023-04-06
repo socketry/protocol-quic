@@ -51,7 +51,7 @@ platform-darwin-ios:
   :commit: c81ccc5ee73cb1c6ae31e378148c4cb8c9f8759e
   :branch: master
 build-darwin:
-  :commit: 4dce329501f49a3f2a4c480a72767ef823f95e37
+  :commit: 5e715cc7f4de4d1ba1dfeccde17b48662d799097
   :branch: master
 ruby:
   :commit: b7f01a474992ec1c0f3033fee2b9e61fe438f1e3

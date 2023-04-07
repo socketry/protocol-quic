@@ -8,7 +8,10 @@
 
 #include "ClientContext.hpp"
 
-#include <unique_ptr>
+#include <memory>
+#include <stdexcept>
+
+#include <openssl/pem.h>
 
 namespace Protocol
 {
@@ -64,30 +67,41 @@ namespace Protocol
 			void ClientContext::load_certificate_file(const char * path)
 			{
 				if (ptls_load_certificates(&_context, path) != 0) {
-					raise std::runtime_error(std::string("Could not load certificate file ") + cert_file);
+					throw std::runtime_error(std::string("Could not load certificate file ") + path);
 				}
 			}
 			
-			using defer = std::unique_ptr<void>;
+			template <typename Callback>
+			struct Defer {
+				Callback _callback;
+				
+				Defer(Callback callback) : _callback(callback) {}
+				~Defer() {_callback();}
+			};
+			
+			template <typename Callback>
+			Defer<Callback> defer(Callback callback) {
+				return Defer<Callback>(callback);
+			}
 			
 			void ClientContext::load_private_key_file(const char * path)
 			{
-				auto file = fopen(private_key_file, "rb");
+				auto file = fopen(path, "rb");
 				if (file == nullptr) {
-					raise std::runtime_error(std::string("Could not open private key file ") + private_key_file);
+					throw std::runtime_error(std::string("Could not open private key file ") + path);
 				}
 				
-				auto close_file = defer(nullptr, [&]{fclose(file);})
+				auto close_file = defer([&]{fclose(file);});
 				
-				auto private_key = PEM_read_PrivateKey(fp, nullptr, nullptr, nullptr);
+				auto private_key = PEM_read_PrivateKey(file, nullptr, nullptr, nullptr);
 				if (private_key == nullptr) {
-					raise std::runtime_error(std::string("Could not read private key file ") + private_key_file);
+					throw std::runtime_error(std::string("Could not read private key file ") + path);
 				}
 				
-				auto free_private_key = defer(nullptr, [&]{EVP_PKEY_free(private_key);})
+				auto free_private_key = defer([&]{EVP_PKEY_free(private_key);});
 				
 				if (ptls_openssl_init_sign_certificate(&_sign_certificate, private_key) != 0) {
-					raise std::runtime_error(std::string("Could not initialize sign certificate ") + private_key_file);
+					throw std::runtime_error(std::string("Could not initialize sign certificate ") + path);
 				}
 				
 				_context.sign_certificate = &_sign_certificate.super;

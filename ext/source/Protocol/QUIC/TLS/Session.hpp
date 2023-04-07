@@ -11,6 +11,8 @@
 #include <ngtcp2/ngtcp2_crypto_picotls.h>
 #include <picotls.h>
 
+#include <string>
+
 namespace Protocol
 {
 	namespace QUIC
@@ -28,7 +30,7 @@ namespace Protocol
 				std::string cipher_name() const;
 				std::string selected_protocol() const;
 				
-			private:
+			protected:
 				ngtcp2_crypto_picotls_ctx _context;
 			};
 		}

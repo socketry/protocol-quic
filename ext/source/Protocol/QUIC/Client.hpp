@@ -8,6 +8,10 @@
 
 #pragma once
 
+#include <cstdint>
+
+#include <ngtcp2/ngtcp2_crypto_picotls.h>
+
 namespace Protocol
 {
 	namespace QUIC
@@ -15,19 +19,19 @@ namespace Protocol
 		class Client
 		{
 		public:
-			Client(uint32_t chosen_version, uint32_t original_version);
+			Client(std::uint32_t chosen_version, std::uint32_t original_version);
 			virtual ~Client();
 			
 		private:
-			uint32_t _chosen_version;
-			uint32_t _original_version;
+			std::uint32_t _chosen_version;
+			std::uint32_t _original_version;
 		
-			ngtcp2_crypto_conn_ref _connection_ref;
-			TLSClientSession _tls_session;
+			// ngtcp2_crypto_conn_ref _connection_ref;
+			// TLSClientSession _tls_session;
 			
-			ngtcp2_conn *_connection;
-			ngtcp2_connection_close_error _last_error;
-			bool _ticket_received;
+			// ngtcp2_conn *_connection;
+			// ngtcp2_connection_close_error _last_error;
+			// bool _ticket_received;
 		};
 	}
 }

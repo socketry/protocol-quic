@@ -11,6 +11,10 @@
 #include <picotls.h>
 #include <picotls/openssl.h>
 
+#include <ngtcp2/ngtcp2.h>
+#include <ngtcp2/ngtcp2_crypto.h>
+#include <ngtcp2/ngtcp2_crypto_picotls.h>
+
 namespace Protocol
 {
 	namespace QUIC
@@ -36,29 +40,3 @@ namespace Protocol
 		}
 	}
 }
-
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif // HAVE_CONFIG_H
-
-#include <picotls.h>
-#include <picotls/openssl.h>
-
-class TLSClientContext {
-public:
-  TLSClientContext();
-  ~TLSClientContext();
-
-  int init(const char *private_key_file, const char *cert_file);
-
-  ptls_context_t *get_native_handle();
-
-  void enable_keylog();
-
-private:
-  int load_private_key(const char *private_key_file);
-
-
-};
-
-#endif // TLS_CLIENT_CONTEXT_PICOTLS_H

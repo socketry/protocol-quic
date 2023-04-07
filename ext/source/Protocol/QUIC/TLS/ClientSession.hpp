@@ -11,13 +11,15 @@
 #include "Session.hpp"
 #include "ClientContext.hpp"
 
+#include <string_view>
+
 namespace Protocol
 {
 	namespace QUIC
 	{
 		namespace TLS
 		{
-			class ClientSession < Session
+			class ClientSession : public Session
 			{
 			public:
 				ClientSession(ClientContext &client_context, ngtcp2_conn *connection, std::string_view server_name);

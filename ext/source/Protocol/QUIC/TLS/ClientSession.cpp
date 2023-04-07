@@ -8,6 +8,9 @@
 
 #include "ClientSession.hpp"
 
+#include <array>
+#include <stdexcept>
+
 namespace Protocol
 {
 	namespace QUIC
@@ -20,14 +23,16 @@ namespace Protocol
 				return client_session->connection();
 			}
 			
+			uint8_t PROTOCOL_H3[] = {'h', '3'};
+			
 			auto NEGOTIATED_PROTOCOLS = std::array<ptls_iovec_t, 1>{{
 				{
-				.base = "h3",
-				.len = 2,
+				.base = PROTOCOL_H3,
+				.len = sizeof(PROTOCOL_H3),
 				},
 			}};
 			
-			ClientSession::ClientSession(ClientContext &client_context, ngtcp2_conn *connection) : Session(), _connection(connection) _crypto_connection_reference{get_connection, this}
+			ClientSession::ClientSession(ClientContext &client_context, ngtcp2_conn *connection, std::string_view server_name) : Session(), _connection(connection), _crypto_connection_reference{get_connection, this}
 			{
 				_context.ptls = ptls_client_new(client_context.native_handle());
 				
@@ -54,7 +59,7 @@ namespace Protocol
 				handshake_properties.client.negotiated_protocols.list = NEGOTIATED_PROTOCOLS.data();
   			handshake_properties.client.negotiated_protocols.count = NEGOTIATED_PROTOCOLS.size();
 				
-				ptls_set_server_name(_context.ptls, server_name.c_str(), server_name.size());
+				ptls_set_server_name(_context.ptls, server_name.data(), server_name.size());
 			}
 			
 			ClientSession::~ClientSession()

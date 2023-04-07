@@ -12,16 +12,17 @@ end
 define_target "protocol-quic" do |target|
 	target.depends :platform
 	
+	target.depends "Library/ngtcp2"
 	target.depends "Library/nghttp3"
 	target.depends "Library/ruby"
 	
-	target.depends "Language/C99"
+	target.depends "Language/C++17"
 	target.depends "Build/Files"
 	
 	target.provides "Library/protocol/quic" do
 		source_root = target.package.path + 'source'
 		
-		library_path = build dynamic_library: "Protocol_QUIC", source_files: source_root.glob('**/*.c')
+		library_path = build dynamic_library: "Protocol_QUIC", source_files: source_root.glob('**/*.{c,cpp}')
 		
 		copy source: [library_path], prefix: environment[:ruby_install_path]
 	end

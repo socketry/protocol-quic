@@ -4,3 +4,4 @@
 /.covered.db
 /external
 /ext/teapot
+/lib/Protocol_QUIC.*

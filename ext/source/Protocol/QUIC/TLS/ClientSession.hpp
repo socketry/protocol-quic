@@ -8,19 +8,29 @@
 
 #pragma once
 
+#include "Session.hpp"
+#include "ClientContext.hpp"
+
 namespace Protocol
 {
 	namespace QUIC
 	{
 		namespace TLS
 		{
-			class ClientSession
+			class ClientSession < Session
 			{
 			public:
-				ClientSession();
+				ClientSession(ClientContext &client_context, ngtcp2_conn *connection, std::string_view server_name);
 				virtual ~ClientSession();
 				
+				const ngtcp2_conn * connection() const {return _connection;}
+				ngtcp2_conn * connection() {return _connection;}
+				
+				bool early_data_accepted() const;
+				
 			private:
+				ngtcp2_conn *_connection;
+				ngtcp2_crypto_conn_ref _crypto_connection_reference;
 				
 			};
 		}

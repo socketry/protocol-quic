@@ -12,6 +12,7 @@
 #include "ClientContext.hpp"
 
 #include <string_view>
+#include <vector>
 
 namespace Protocol
 {
@@ -31,9 +32,10 @@ namespace Protocol
 				bool early_data_accepted() const;
 				
 			private:
+				std::vector<ptls_raw_extension_t> _extensions;
+				
 				ngtcp2_conn *_connection;
 				ngtcp2_crypto_conn_ref _crypto_connection_reference;
-				
 			};
 		}
 	}

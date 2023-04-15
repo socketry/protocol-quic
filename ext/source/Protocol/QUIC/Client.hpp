@@ -9,8 +9,9 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
-#include <ngtcp2/ngtcp2_crypto_picotls.h>
+#include "TLS/ClientSession.hpp"
 
 namespace Protocol
 {
@@ -19,19 +20,21 @@ namespace Protocol
 		class Client
 		{
 		public:
-			Client(std::uint32_t chosen_version, std::uint32_t original_version);
+			Client(std::unique_ptr<TLS::ClientSession> client_session, std::uint32_t chosen_version, std::uint32_t original_version);
 			virtual ~Client();
 			
-		private:
+			void ticket_received() {_ticket_received = true;}
+			
+		protected:
 			std::uint32_t _chosen_version;
 			std::uint32_t _original_version;
 		
-			// ngtcp2_crypto_conn_ref _connection_ref;
-			// TLSClientSession _tls_session;
+			TLS::ClientSession _tls_client_session;
 			
-			// ngtcp2_conn *_connection;
-			// ngtcp2_connection_close_error _last_error;
-			// bool _ticket_received;
+			bool _ticket_received = false;
+			
+			std::unique_ptr<ngtcp2_conn> _connection;
+			ngtcp2_connection_close_error _last_error;
 		};
 	}
 }

@@ -14,6 +14,7 @@ namespace Protocol
 	{
 		Client::Client(uint32_t chosen_version, uint32_t original_version) : _chosen_version(chosen_version), _original_version(original_version) 
 		{
+			ngtcp2_connection_close_error_default(&_last_error);
 		}
 		
 		Client::~Client()

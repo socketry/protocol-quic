@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <string>
 
 #include <openssl/pem.h>
 

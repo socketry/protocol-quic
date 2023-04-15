@@ -42,15 +42,16 @@ namespace Protocol
 				
 				*ptls_get_data_ptr(_context.ptls) = &_crypto_connection_reference;
 				
+				_extensions.push_back({
+					.type = UINT16_MAX,
+				});
+				
+				_extensions.push_back({
+					.type = UINT16_MAX,
+				});
+				
 				auto handshake_properties = _context.handshake_properties;
-				handshake_properties.additional_extensions = new ptls_raw_extension_t[2]{
-					{
-						.type = UINT16_MAX,
-					},
-					{
-						.type = UINT16_MAX,
-					},
-				};
+				handshake_properties.additional_extensions = _extensions.data();
 				
 				if (ngtcp2_crypto_picotls_configure_client_session(&_context, connection) != 0) {
 					throw std::runtime_error("Could not configure client session");

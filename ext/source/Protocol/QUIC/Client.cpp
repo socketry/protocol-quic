@@ -57,7 +57,7 @@ namespace Protocol
 				.version_negotiation = ngtcp2_crypto_version_negotiation_cb,
 			};
 			
-			if (ngtcp2_conn_client_new(&_connection, dcid, scid, path, chosen_version, callbacks, settings, transport_parameters, nullptr, this)) {
+			if (ngtcp2_conn_client_new(&_connection, dcid, scid, path, chosen_version, &callbacks, settings, transport_parameters, nullptr, this)) {
 				throw std::runtime_error("Failed to create QUIC client connection!");
 			}
 			
@@ -69,10 +69,10 @@ namespace Protocol
 			ngtcp2_conn_del(_connection);
 		}
 		
-		void Client::decode_early_transport_parameters(std::string_view buffer)
-		{
-			ngtcp2_conn_decode_early_transport_params(_connection, buffer.data(), buffer.size());
-		}
+		// void Client::decode_early_transport_parameters(std::string_view buffer)
+		// {
+		// 	ngtcp2_conn_decode_early_transport_params(_connection, buffer.data(), buffer.size());
+		// }
 		
 		void Client::generate_connection_id(ngtcp2_cid *cid, std::size_t cidlen, uint8_t *token)
 		{

@@ -33,7 +33,7 @@ namespace Protocol
 				return ngtcp2_conn_get_max_local_streams_uni(_connection);
 			}
 			
-			virtual void decode_early_transport_parameters(std::string_view data);
+			// virtual void decode_early_transport_parameters(std::string_view data);
 			
 			virtual void generate_connection_id(ngtcp2_cid *cid, std::size_t cidlen, uint8_t *token);
 			

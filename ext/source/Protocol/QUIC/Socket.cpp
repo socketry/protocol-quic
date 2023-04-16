@@ -7,6 +7,7 @@
 //
 
 #include "Socket.hpp"
+#include "Defer.hpp"
 
 #include <cstring>
 #include <stdexcept>

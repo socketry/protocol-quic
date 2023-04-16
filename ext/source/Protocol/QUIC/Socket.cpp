@@ -38,19 +38,6 @@ namespace Protocol
 			}
 		}
 		
-		template <typename Callback>
-		struct Defer {
-			Callback _callback;
-			
-			Defer(Callback callback) : _callback(callback) {}
-			~Defer() {_callback();}
-		};
-		
-		template <typename Callback>
-		Defer<Callback> defer(Callback callback) {
-			return Defer<Callback>(callback);
-		}
-		
 		unsigned int get_ecn(msghdr *msg, int family) {
 			switch (family) {
 			case AF_INET:

@@ -8,9 +8,13 @@
 
 #pragma once
 
+#include "Random.hpp"
+
 #include <cstdint>
 #include <memory>
+#include <string_view>
 
+#include <ngtcp2/ngtcp2.h>
 #include "TLS/ClientSession.hpp"
 
 namespace Protocol
@@ -20,21 +24,29 @@ namespace Protocol
 		class Client
 		{
 		public:
-			Client(std::unique_ptr<TLS::ClientSession> client_session, std::uint32_t chosen_version, std::uint32_t original_version);
+			Client(std::shared_ptr<TLS::ClientContext> tls_context, const ngtcp2_cid *dcid, const ngtcp2_cid *scid, const ngtcp2_path *path, std::uint32_t chosen_version, ngtcp2_settings *settings, ngtcp2_transport_params *transport_parameters);
 			virtual ~Client();
 			
-			void ticket_received() {_ticket_received = true;}
+			ngtcp2_conn* native_handle() {return _connection;}
+			
+			std::uint64_t maximum_local_unidirectional_streams() const {
+				return ngtcp2_conn_get_max_local_streams_uni(_connection);
+			}
+			
+			virtual void decode_early_transport_parameters(std::string_view data);
+			
+			virtual void generate_connection_id(ngtcp2_cid *cid, std::size_t cidlen, uint8_t *token);
 			
 		protected:
-			std::uint32_t _chosen_version;
-			std::uint32_t _original_version;
-		
-			TLS::ClientSession _tls_client_session;
+			std::shared_ptr<TLS::ClientContext> _tls_context;
 			
-			bool _ticket_received = false;
+			Random _random;
+			std::array<uint8_t, 32> _static_secret;
 			
-			std::unique_ptr<ngtcp2_conn> _connection;
+			ngtcp2_conn *_connection;
 			ngtcp2_connection_close_error _last_error;
+			
+			std::uint32_t _chosen_version;
 		};
 	}
 }

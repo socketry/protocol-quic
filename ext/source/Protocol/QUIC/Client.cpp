@@ -1,87 +1,71 @@
-//
-//  Client.cpp
-//  This file is part of the "Protocol::QUIC" project and released under the MIT License.
-//
-//  Created by Samuel Williams on 5/4/2023.
-//  Copyright, 2023, by Samuel Williams. All rights reserved.
-//
 
 #include "Client.hpp"
 
-#include <ngtcp2/ngtcp2.h>
-#include <stdexcept>
+#include "Configuration.hpp"
+#include "TLS/ClientContext.hpp"
+#include "Socket.hpp"
+#include "Address.hpp"
+#include "Stream.hpp"
 
-#include <ngtcp2/ngtcp2_crypto.h>
+VALUE Protocol_QUIC_Client = Qnil;
 
-namespace Protocol
-{
-	namespace QUIC
+class RubyClient : public Protocol::QUIC::Client {
+	VALUE _self;
+public:
+	RubyClient(VALUE self, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE chosen_version) : Protocol::QUIC::Client(*Protocol_QUIC_Configuration_get(configuration), *Protocol_QUIC_TLS_ClientContext_get(tls_context), *Protocol_QUIC_Socket_get(socket), *Protocol_QUIC_Address_get(remote_address), RB_NUM2UINT(chosen_version)), _self(self) {}
+	virtual ~RubyClient() {}
+	
+	Protocol::QUIC::Stream * create_stream(Protocol::QUIC::StreamID stream_id) override
 	{
-		void random_callback(std::uint8_t *dest, std::size_t size, const ngtcp2_rand_ctx *context)
-		{
-			auto & random = *reinterpret_cast<Random*>(context->native_handle);
-			random.generate(dest, size);
-		}
+		VALUE stream = rb_funcall(_self, rb_intern("create_stream"), 1, RB_LL2NUM(stream_id));
 		
-		int get_new_connection_id_callback(ngtcp2_conn *conn, ngtcp2_cid *cid, uint8_t *token, size_t cidlen, void *user_data)
-		{
-			auto & client = *reinterpret_cast<Client*>(user_data);
-			
-			try {
-				client.generate_connection_id(cid, cidlen, token);
-			} catch (...) {
-				return NGTCP2_ERR_CALLBACK_FAILURE;
-			}
-			
-			return 0;
-		}
-		
-		Client::Client(std::shared_ptr<TLS::ClientContext> tls_context, const ngtcp2_cid *dcid, const ngtcp2_cid *scid, const ngtcp2_path *path, std::uint32_t chosen_version, ngtcp2_settings *settings, ngtcp2_transport_params *transport_parameters) : _tls_context(tls_context), _chosen_version(chosen_version)
-		{
-			Random::generate_secret(_static_secret);
-			settings->rand_ctx.native_handle = reinterpret_cast<void*>(&_random);
-			
-			auto callbacks = ngtcp2_callbacks{
-				.client_initial = ngtcp2_crypto_client_initial_cb,
-				.recv_crypto_data = ngtcp2_crypto_recv_crypto_data_cb,
-				.encrypt = ngtcp2_crypto_encrypt_cb,
-				.decrypt = ngtcp2_crypto_decrypt_cb,
-				.hp_mask = ngtcp2_crypto_hp_mask_cb,
-				.recv_retry = ngtcp2_crypto_recv_retry_cb,
-				.rand = random_callback,
-				.get_new_connection_id = get_new_connection_id_callback,
-				.update_key = ngtcp2_crypto_update_key_cb,
-				.delete_crypto_aead_ctx = ngtcp2_crypto_delete_crypto_aead_ctx_cb,
-				.delete_crypto_cipher_ctx = ngtcp2_crypto_delete_crypto_cipher_ctx_cb,
-				.get_path_challenge_data = ngtcp2_crypto_get_path_challenge_data_cb,
-				.version_negotiation = ngtcp2_crypto_version_negotiation_cb,
-			};
-			
-			if (ngtcp2_conn_client_new(&_connection, dcid, scid, path, chosen_version, &callbacks, settings, transport_parameters, nullptr, this)) {
-				throw std::runtime_error("Failed to create QUIC client connection!");
-			}
-			
-			ngtcp2_conn_set_tls_native_handle(_connection, _tls_context->native_handle());
-		}
-		
-		Client::~Client()
-		{
-			ngtcp2_conn_del(_connection);
-		}
-		
-		// void Client::decode_early_transport_parameters(std::string_view buffer)
-		// {
-		// 	ngtcp2_conn_decode_early_transport_params(_connection, buffer.data(), buffer.size());
-		// }
-		
-		void Client::generate_connection_id(ngtcp2_cid *cid, std::size_t cidlen, uint8_t *token)
-		{
-			Random::generate_secure(cid->data, cidlen);
-			cid->datalen = cidlen;
-			
-			if (ngtcp2_crypto_generate_stateless_reset_token(token, _static_secret.data(), _static_secret.size(), cid) != 0) {
-				throw std::runtime_error("Failed to generate stateless reset token!");
-			}
-		}
+		return Protocol_QUIC_Stream_get(stream);
 	}
+};
+
+static void Protocol_QUIC_Client_free(void *data)
+{
+	if (data) {
+		delete reinterpret_cast<Protocol::QUIC::Client *>(data);
+	}
+}
+
+static size_t Protocol_QUIC_Client_size(const void *data) {
+	return sizeof(RubyClient);
+}
+
+static const rb_data_type_t Protocol_QUIC_Client_type = {
+	.wrap_struct_name = "Protocol::QUIC::Client",
+	.function = {
+		.dmark = NULL,
+		.dfree = Protocol_QUIC_Client_free,
+		.dsize = Protocol_QUIC_Client_size,
+	},
+	.data = NULL,
+	.flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
+Protocol::QUIC::Client * Protocol_QUIC_Client_get(VALUE self)
+{
+	Protocol::QUIC::Client *configuration;
+	TypedData_Get_Struct(self, Protocol::QUIC::Client, &Protocol_QUIC_Client_type, configuration);
+	return configuration;
+}
+
+static VALUE Protocol_QUIC_Client_allocate(VALUE klass) {
+	return TypedData_Wrap_Struct(klass, &Protocol_QUIC_Client_type, NULL);
+}
+
+static VALUE Protocol_QUIC_Client_initialize(VALUE self, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE chosen_version) {
+	Protocol::QUIC::Client *client = new RubyClient(self, configuration, tls_context, socket, remote_address, chosen_version);
+	DATA_PTR(self) = client;
+	return self;
+}
+
+void Init_Protocol_QUIC_Client(VALUE Protocol_QUIC) {
+	Protocol_QUIC_Client =
+			rb_define_class_under(Protocol_QUIC, "Client", rb_cObject);
+
+	rb_define_alloc_func(Protocol_QUIC_Client, Protocol_QUIC_Client_allocate);
+	rb_define_method(Protocol_QUIC_Client, "initialize", Protocol_QUIC_Client_initialize, 5);
 }

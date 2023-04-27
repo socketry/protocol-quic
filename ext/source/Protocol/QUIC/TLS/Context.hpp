@@ -1,5 +1,5 @@
 //
-//  Stream.hpp
+//  Context.h
 //  This file is part of the "Protocol::QUIC" project and released under the MIT License.
 //
 //  Created by Samuel Williams on 27/4/2023.
@@ -10,19 +10,17 @@
 
 #include <ruby.h>
 
-#include <Protocol/QUIC/Stream.hpp>
+#include <Protocol/QUIC/TLS/Context.hpp>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern VALUE Protocol_QUIC_Stream;
+extern VALUE Protocol_QUIC_TLS_Context;
 
-void Init_Protocol_QUIC_Stream(VALUE Protocol_QUIC);
+extern const rb_data_type_t Protocol_QUIC_TLS_Context_type;
 
-Protocol::QUIC::Stream * Protocol_QUIC_Stream_get(VALUE self);
-
-VALUE Protocol_QUIC_Stream_allocate(VALUE klass);
+void Init_Protocol_QUIC_TLS_Context(VALUE Protocol_QUIC);
 
 #ifdef __cplusplus
 }

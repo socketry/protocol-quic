@@ -1,5 +1,5 @@
 //
-//  Stream.hpp
+//  ServerContext.h
 //  This file is part of the "Protocol::QUIC" project and released under the MIT License.
 //
 //  Created by Samuel Williams on 27/4/2023.
@@ -10,19 +10,17 @@
 
 #include <ruby.h>
 
-#include <Protocol/QUIC/Stream.hpp>
+#include <Protocol/QUIC/TLS/ServerContext.hpp>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern VALUE Protocol_QUIC_Stream;
+extern VALUE Protocol_QUIC_TLS_ServerContext;
 
-void Init_Protocol_QUIC_Stream(VALUE Protocol_QUIC);
+void Init_Protocol_QUIC_TLS_ServerContext(VALUE Protocol_QUIC_TLS);
 
-Protocol::QUIC::Stream * Protocol_QUIC_Stream_get(VALUE self);
-
-VALUE Protocol_QUIC_Stream_allocate(VALUE klass);
+Protocol::QUIC::TLS::ServerContext * Protocol_QUIC_TLS_ServerContext_get(VALUE self);
 
 #ifdef __cplusplus
 }

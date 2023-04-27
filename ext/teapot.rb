@@ -4,23 +4,21 @@
 
 teapot_version "3.0"
 
-define_project "protocol-quic" do |project|
+define_project "ruby-protocol-quic" do |project|
 	project.title = "Protocol::QUIC"
 	project.license = "MIT License"
 end
 
-define_target "protocol-quic" do |target|
-	target.depends :platform
+define_target "ruby-protocol-quic" do |target|
+	target.depends "Language/C++17"
 	
-	target.depends "Library/ngtcp2"
-	target.depends "Library/nghttp3"
+	target.depends "Library/Protocol/QUIC"
 	target.depends "Library/ruby"
 	
-	target.depends "Language/C++17"
 	target.depends "Build/Files"
 	target.depends "Build/Compile/Commands"
 	
-	target.provides "Library/protocol/quic" do
+	target.provides "Ruby/Protocol/QUIC" do
 		source_root = target.package.path + 'source'
 		
 		library_path = build dynamic_library: "Protocol_QUIC", source_files: source_root.glob('**/*.{c,cpp}')
@@ -31,7 +29,7 @@ define_target "protocol-quic" do |target|
 	end
 end
 
-define_configuration "protocol-quic" do |configuration|
+define_configuration "ruby-protocol-quic" do |configuration|
 	configuration[:source] = "https://github.com/kurocha/"
 	
 	configuration.require "platforms"
@@ -39,7 +37,8 @@ define_configuration "protocol-quic" do |configuration|
 	configuration.require "build-make"
 	configuration.require "build-cmake"
 	
-	configuration.require "nghttp3"
+	configuration.require "scheduler"
+	configuration.require "protocol-quic"
 	configuration.require "ruby"
 	
 	configuration.require "generate-template"

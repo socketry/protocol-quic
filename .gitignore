@@ -6,3 +6,4 @@
 /ext/teapot
 /lib/Protocol_QUIC.*
 compile_commands.json
+.cache

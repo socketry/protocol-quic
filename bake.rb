@@ -21,5 +21,6 @@ def clean
 end
 
 def console
+	require_relative 'lib/protocol/quic'
 	binding.irb
 end

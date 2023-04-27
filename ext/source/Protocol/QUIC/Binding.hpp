@@ -1,5 +1,5 @@
 //
-//  Stream.hpp
+//  Binding.h
 //  This file is part of the "Protocol::QUIC" project and released under the MIT License.
 //
 //  Created by Samuel Williams on 27/4/2023.
@@ -10,19 +10,17 @@
 
 #include <ruby.h>
 
-#include <Protocol/QUIC/Stream.hpp>
+#include <Protocol/QUIC/Binding.hpp>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern VALUE Protocol_QUIC_Stream;
+extern VALUE Protocol_QUIC_Binding;
 
-void Init_Protocol_QUIC_Stream(VALUE Protocol_QUIC);
+void Init_Protocol_QUIC_Binding(VALUE Protocol_QUIC);
 
-Protocol::QUIC::Stream * Protocol_QUIC_Stream_get(VALUE self);
-
-VALUE Protocol_QUIC_Stream_allocate(VALUE klass);
+Protocol::QUIC::Binding * Protocol_QUIC_Binding_get(VALUE self);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,5 @@
 //
-//  Stream.hpp
+//  PacketHeader.hpp
 //  This file is part of the "Protocol::QUIC" project and released under the MIT License.
 //
 //  Created by Samuel Williams on 27/4/2023.
@@ -10,19 +10,19 @@
 
 #include <ruby.h>
 
-#include <Protocol/QUIC/Stream.hpp>
+#include <ngtcp2/ngtcp2.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern VALUE Protocol_QUIC_Stream;
+extern VALUE Protocol_QUIC_PacketHeader;
 
-void Init_Protocol_QUIC_Stream(VALUE Protocol_QUIC);
+void Init_Protocol_QUIC_PacketHeader(VALUE Protocol_QUIC);
 
-Protocol::QUIC::Stream * Protocol_QUIC_Stream_get(VALUE self);
+ngtcp2_pkt_hd * Protocol_QUIC_PacketHeader_get(VALUE self);
 
-VALUE Protocol_QUIC_Stream_allocate(VALUE klass);
+VALUE Protocol_QUIC_PacketHeader_allocate(VALUE klass);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,5 @@
 //
-//  Stream.hpp
+//  Connection.h
 //  This file is part of the "Protocol::QUIC" project and released under the MIT License.
 //
 //  Created by Samuel Williams on 27/4/2023.
@@ -10,19 +10,19 @@
 
 #include <ruby.h>
 
-#include <Protocol/QUIC/Stream.hpp>
+#include <Protocol/QUIC/Connection.hpp>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern VALUE Protocol_QUIC_Stream;
+extern VALUE Protocol_QUIC_Connection;
 
-void Init_Protocol_QUIC_Stream(VALUE Protocol_QUIC);
+extern const rb_data_type_t Protocol_QUIC_Connection_type;
 
-Protocol::QUIC::Stream * Protocol_QUIC_Stream_get(VALUE self);
+void Init_Protocol_QUIC_Connection(VALUE Protocol_QUIC);
 
-VALUE Protocol_QUIC_Stream_allocate(VALUE klass);
+Protocol::QUIC::Connection * Protocol_QUIC_Connection_get(VALUE self);
 
 #ifdef __cplusplus
 }

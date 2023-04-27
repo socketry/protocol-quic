@@ -16,7 +16,7 @@ class RubyStream : public Protocol::QUIC::BufferedStream {
 	VALUE _self;
 public:
 	RubyStream(VALUE self, VALUE connection, VALUE stream_id) : Protocol::QUIC::BufferedStream(*Protocol_QUIC_Connection_get(connection), RB_NUM2LL(stream_id)), _self(self) {}
-	virtual ~RubyStream();
+	virtual ~RubyStream() {}
 };
 
 static void Protocol_QUIC_Stream_free(void *data) {

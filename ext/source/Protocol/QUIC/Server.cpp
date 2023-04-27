@@ -17,6 +17,7 @@ class RubyServer : public Protocol::QUIC::Server {
 	VALUE _self;
 public:
 	RubyServer(VALUE self, VALUE binding, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE packet_header, VALUE ocid) : Protocol::QUIC::Server(*Protocol_QUIC_Binding_get(binding), *Protocol_QUIC_Configuration_get(configuration), *Protocol_QUIC_TLS_ServerContext_get(tls_context), *Protocol_QUIC_Socket_get(socket), *Protocol_QUIC_Address_get(remote_address), *Protocol_QUIC_PacketHeader_get(packet_header), nullptr), _self(self) {}
+	virtual ~RubyServer() {}
 	
 	Protocol::QUIC::Stream * create_stream(Protocol::QUIC::StreamID stream_id) override
 	{

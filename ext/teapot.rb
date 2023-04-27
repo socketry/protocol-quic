@@ -13,7 +13,7 @@ define_target "ruby-protocol-quic" do |target|
 	target.depends "Language/C++17"
 	
 	target.depends "Library/Protocol/QUIC"
-	target.depends "Library/ruby"
+	# target.depends "Library/ruby"
 	
 	target.depends "Build/Files"
 	target.depends "Build/Compile/Commands"
@@ -37,7 +37,7 @@ define_configuration "ruby-protocol-quic" do |configuration|
 	configuration.require "build-make"
 	configuration.require "build-cmake"
 	
-	configuration.require "scheduler"
+	configuration.require "scheduler-ruby"
 	configuration.require "protocol-quic"
 	configuration.require "ruby"
 	

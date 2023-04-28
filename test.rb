@@ -30,11 +30,11 @@ end
 class Dispatcher < Protocol::QUIC::Dispatcher
 	def create_server(socket, address, packet_header)
 		$stderr.puts "Dispatcher create server"
-		Server.new(self, configuration, tls_context, socket, address, packet_header, nil)
+		server = Server.new(self, configuration, tls_context, socket, address, packet_header, nil)
+		server.send_packets
+		return server
 	end
 end
-
-GC.disable
 
 threads = []
 
@@ -60,7 +60,7 @@ addresses.each do |address|
 end
 
 addresses.each do |address|
-	Thread.new do
+	threads << Thread.new do
 		socket = Protocol::QUIC::Socket.new(address.family, Socket::SOCK_DGRAM, Socket::IPPROTO_UDP)
 		socket.connect(address)
 		

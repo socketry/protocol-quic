@@ -25,7 +25,18 @@ public:
 		
 		return Protocol_QUIC_Stream_get(stream);
 	}
+	
+	void mark() {
+		rb_gc_mark(_self);
+	}
 };
+
+static void Protocol_QUIC_Server_mark(void *data)
+{
+	if (data) {
+		reinterpret_cast<RubyServer *>(data)->mark();
+	}
+}
 
 static void Protocol_QUIC_Server_free(void *data)
 {
@@ -41,7 +52,7 @@ static size_t Protocol_QUIC_Server_size(const void *data) {
 static const rb_data_type_t Protocol_QUIC_Server_type = {
 	.wrap_struct_name = "Protocol::QUIC::Server",
 	.function = {
-		.dmark = NULL,
+		.dmark = Protocol_QUIC_Server_mark,
 		.dfree = Protocol_QUIC_Server_free,
 		.dsize = Protocol_QUIC_Server_size,
 	},
@@ -72,10 +83,20 @@ static VALUE Protocol_QUIC_Server_initialize(VALUE self, VALUE dispatcher, VALUE
 	return self;
 }
 
+static VALUE Protocol_QUIC_Server_send_packets(VALUE self) {
+	Protocol::QUIC::Server *server = Protocol_QUIC_Server_get(self);
+	
+	server->send_packets();
+	
+	return Qnil;
+}
+
 void Init_Protocol_QUIC_Server(VALUE Protocol_QUIC) {
 	Protocol_QUIC_Server =
 			rb_define_class_under(Protocol_QUIC, "Server", rb_cObject);
 
 	rb_define_alloc_func(Protocol_QUIC_Server, Protocol_QUIC_Server_allocate);
 	rb_define_method(Protocol_QUIC_Server, "initialize", Protocol_QUIC_Server_initialize, 7);
+	
+	rb_define_method(Protocol_QUIC_Server, "send_packets", Protocol_QUIC_Server_send_packets, 0);
 }

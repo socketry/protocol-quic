@@ -16,8 +16,19 @@ class RubyStream : public Protocol::QUIC::BufferedStream {
 	VALUE _self;
 public:
 	RubyStream(VALUE self, VALUE connection, VALUE stream_id) : Protocol::QUIC::BufferedStream(*Protocol_QUIC_Connection_get(connection), RB_NUM2LL(stream_id)), _self(self) {}
+	
 	virtual ~RubyStream() {}
+	
+	void mark() {
+		rb_gc_mark(_self);
+	}
 };
+
+static void Protocol_QUIC_Stream_mark(void *data) {
+	if (data) {
+		reinterpret_cast<RubyStream *>(data)->mark();
+	}
+}
 
 static void Protocol_QUIC_Stream_free(void *data) {
 	if (data) {
@@ -32,7 +43,7 @@ static size_t Protocol_QUIC_Stream_size(const void *data) {
 const rb_data_type_t Protocol_QUIC_Stream_type = {
 	.wrap_struct_name = "Protocol::QUIC::Stream",
 	.function = {
-		.dmark = NULL,
+		.dmark = Protocol_QUIC_Stream_mark,
 		.dfree = Protocol_QUIC_Stream_free,
 		.dsize = Protocol_QUIC_Stream_size,
 	},

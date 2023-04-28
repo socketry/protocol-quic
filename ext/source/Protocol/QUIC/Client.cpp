@@ -26,7 +26,18 @@ public:
 		
 		return Protocol_QUIC_Stream_get(stream);
 	}
+	
+	void mark() {
+		rb_gc_mark(_self);
+	}
 };
+
+static void Protocol_QUIC_Client_mark(void *data)
+{
+	if (data) {
+		reinterpret_cast<RubyClient *>(data)->mark();
+	}
+}
 
 static void Protocol_QUIC_Client_free(void *data)
 {
@@ -42,7 +53,7 @@ static size_t Protocol_QUIC_Client_size(const void *data) {
 static const rb_data_type_t Protocol_QUIC_Client_type = {
 	.wrap_struct_name = "Protocol::QUIC::Client",
 	.function = {
-		.dmark = NULL,
+		.dmark = Protocol_QUIC_Client_mark,
 		.dfree = Protocol_QUIC_Client_free,
 		.dsize = Protocol_QUIC_Client_size,
 	},

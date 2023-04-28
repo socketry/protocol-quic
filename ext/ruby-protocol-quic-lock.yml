@@ -74,3 +74,12 @@ picotls:
 openssl:
   :commit: 2f48d686aaaf20dc6d7e8a277803657eb5951530
   :branch: main
+scheduler-ruby:
+  :commit: 880bd7d41eb5274dcd594c19d0535509b762ce93
+  :branch: main
+platform-linux:
+  :commit: c3c5cbf90d26d23c6137def781cd997ddca5e51a
+  :branch: master
+build-linux:
+  :commit: cbc8c52c2ca2fc75761e545c83429ef34e4cd4fe
+  :branch: master

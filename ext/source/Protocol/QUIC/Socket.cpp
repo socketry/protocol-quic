@@ -73,13 +73,31 @@ static VALUE Protocol_QUIC_Socket_remote_address(VALUE self) {
 	}
 }
 
-void Init_Protocol_QUIC_Socket(VALUE Protocol_QUIC) {
-	Protocol_QUIC_Socket =
-			rb_define_class_under(Protocol_QUIC, "Socket", rb_cObject);
+static VALUE Protocol_QUIC_Socket_bind(VALUE self, VALUE address) {
+	auto socket = Protocol_QUIC_Socket_get(self);
+	
+	return RTEST(
+		socket->bind(*Protocol_QUIC_Address_get(address))
+	);
+}
 
+static VALUE Protocol_QUIC_Socket_connect(VALUE self, VALUE address) {
+	auto socket = Protocol_QUIC_Socket_get(self);
+	
+	return RTEST(
+		socket->connect(*Protocol_QUIC_Address_get(address))
+	);
+}
+
+void Init_Protocol_QUIC_Socket(VALUE Protocol_QUIC) {
+	Protocol_QUIC_Socket = rb_define_class_under(Protocol_QUIC, "Socket", rb_cObject);
+	
 	rb_define_alloc_func(Protocol_QUIC_Socket, Protocol_QUIC_Socket_allocate);
 	rb_define_method(Protocol_QUIC_Socket, "initialize", Protocol_QUIC_Socket_initialize, 3);
 	
 	rb_define_method(Protocol_QUIC_Socket, "local_address", Protocol_QUIC_Socket_local_address, 0);
 	rb_define_method(Protocol_QUIC_Socket, "remote_address", Protocol_QUIC_Socket_remote_address, 0);
+	
+	rb_define_method(Protocol_QUIC_Socket, "bind", Protocol_QUIC_Socket_bind, 1);
+	rb_define_method(Protocol_QUIC_Socket, "connect", Protocol_QUIC_Socket_connect, 1);
 }

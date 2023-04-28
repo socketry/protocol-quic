@@ -1,7 +1,7 @@
 
 #include "Server.hpp"
 
-#include "Binding.hpp"
+#include "Dispatcher.hpp"
 #include "Configuration.hpp"
 #include "Connection.hpp"
 #include "TLS/ServerContext.hpp"
@@ -16,7 +16,7 @@ VALUE Protocol_QUIC_Server = Qnil;
 class RubyServer : public Protocol::QUIC::Server {
 	VALUE _self;
 public:
-	RubyServer(VALUE self, VALUE binding, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE packet_header, VALUE ocid) : Protocol::QUIC::Server(*Protocol_QUIC_Binding_get(binding), *Protocol_QUIC_Configuration_get(configuration), *Protocol_QUIC_TLS_ServerContext_get(tls_context), *Protocol_QUIC_Socket_get(socket), *Protocol_QUIC_Address_get(remote_address), *Protocol_QUIC_PacketHeader_get(packet_header), nullptr), _self(self) {}
+	RubyServer(VALUE self, VALUE dispatcher, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE packet_header, VALUE ocid) : Protocol::QUIC::Server(*Protocol_QUIC_Dispatcher_get(dispatcher), *Protocol_QUIC_Configuration_get(configuration), *Protocol_QUIC_TLS_ServerContext_get(tls_context), *Protocol_QUIC_Socket_get(socket), *Protocol_QUIC_Address_get(remote_address), *Protocol_QUIC_PacketHeader_get(packet_header), nullptr), _self(self) {}
 	virtual ~RubyServer() {}
 	
 	Protocol::QUIC::Stream * create_stream(Protocol::QUIC::StreamID stream_id) override
@@ -63,9 +63,9 @@ static VALUE Protocol_QUIC_Server_allocate(VALUE klass) {
 	return TypedData_Wrap_Struct(klass, &Protocol_QUIC_Server_type, NULL);
 }
 
-// Binding & binding, Configuration & configuration, TLS::ServerContext & tls_context, Socket & socket, const Address & remote_address, const ngtcp2_pkt_hd & packet_header, ngtcp2_cid *ocid = nullptr
-static VALUE Protocol_QUIC_Server_initialize(VALUE self, VALUE binding, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE packet_header, VALUE ocid) {
-	Protocol::QUIC::Server *server = new RubyServer(self, binding, configuration, tls_context, socket, remote_address, packet_header, ocid);
+// Dispatcher & dispatcher, Configuration & configuration, TLS::ServerContext & tls_context, Socket & socket, const Address & remote_address, const ngtcp2_pkt_hd & packet_header, ngtcp2_cid *ocid = nullptr
+static VALUE Protocol_QUIC_Server_initialize(VALUE self, VALUE dispatcher, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE packet_header, VALUE ocid) {
+	Protocol::QUIC::Server *server = new RubyServer(self, dispatcher, configuration, tls_context, socket, remote_address, packet_header, ocid);
 
 	DATA_PTR(self) = server;
 

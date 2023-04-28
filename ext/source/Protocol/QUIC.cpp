@@ -4,7 +4,7 @@
 #include "QUIC/TLS/Context.hpp"
 
 #include "QUIC/Address.hpp"
-#include "QUIC/Binding.hpp"
+#include "QUIC/Dispatcher.hpp"
 #include "QUIC/Configuration.hpp"
 #include "QUIC/PacketHeader.hpp"
 #include "QUIC/Socket.hpp"
@@ -23,7 +23,7 @@ void Init_Protocol_QUIC(void)
 	Init_Protocol_QUIC_TLS_Context(Protocol_QUIC);
 	
 	Init_Protocol_QUIC_Address(Protocol_QUIC);
-	Init_Protocol_QUIC_Binding(Protocol_QUIC);
+	Init_Protocol_QUIC_Dispatcher(Protocol_QUIC);
 	Init_Protocol_QUIC_Configuration(Protocol_QUIC);
 	Init_Protocol_QUIC_PacketHeader(Protocol_QUIC);
 	Init_Protocol_QUIC_Socket(Protocol_QUIC);

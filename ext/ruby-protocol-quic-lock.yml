@@ -9,7 +9,7 @@ build-cmake:
   :commit: 6558fdad5bbb475f0fa5584ff773de8f12ff232e
   :branch: master
 scheduler-ruby:
-  :commit: 934200abb26d4ba0fe62f3aaeaef7127ff701a75
+  :commit: 8e4e36bfd47485e8379b3d9c0e4258dec63b7320
   :branch: main
 protocol-quic:
   :commit: 4fa6aaa1b2dcb8f493d4c58535c0417e94095f27
@@ -51,8 +51,8 @@ executor-lldb:
   :commit: 193ba0b15c532d2745b0f0bfb05cd9581e869555
   :branch: master
 time:
-  :commit: 818c090c627da57c66bc56876b91ea74b6483bd7
-  :branch: master
+  :commit: c1ec0bb4fc9abca3de559a87884bdbc1413b3f1f
+  :branch: main
 nghttp3:
   :commit: 922c2aaca406840a63ce2c4a808d9c888538671d
   :branch: main

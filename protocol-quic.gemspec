@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 		"funding_uri" => "https://github.com/sponsors/ioquatix",
 	}
 	
-	spec.files = Dir["{ext,lib}/**/*", "*.md", base: __dir__]
+	spec.files = Dir["{lib}/**/*", "*.md", "ext/*.*", base: __dir__]
 	spec.require_paths = ["lib"]
 	
 	spec.extensions = ["ext/rakefile.rb"]
@@ -29,4 +29,5 @@ Gem::Specification.new do |spec|
 	spec.required_ruby_version = ">= 3.3"
 	
 	spec.add_dependency "teapot", "~> 3.5"
+	spec.add_dependency "rake"
 end

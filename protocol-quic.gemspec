@@ -16,7 +16,9 @@ Gem::Specification.new do |spec|
 	spec.homepage = "https://github.com/socketry/protocol-quic"
 	
 	spec.metadata = {
+		"documentation_uri" => "https://socketry.github.io/protocol-quic/",
 		"source_code_uri" => "https://github.com/socketry/protocol-quic.git",
+		"funding_uri" => "https://github.com/sponsors/ioquatix",
 	}
 	
 	spec.files = Dir["{ext,lib}/**/*", "*.md", base: __dir__]

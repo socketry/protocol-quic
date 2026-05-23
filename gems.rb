@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2023, by Samuel Williams.
+# Copyright, 2023-2026, by Samuel Williams.
 
 source "https://rubygems.org"
 
@@ -12,6 +12,7 @@ gem "teapot"
 group :maintenance, optional: true do
 	gem "bake-gem"
 	gem "bake-modernize"
+	gem "bake-releases"
 	
 	gem "decode"
 	

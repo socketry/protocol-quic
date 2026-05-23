@@ -13,20 +13,36 @@
 VALUE Protocol_QUIC_Stream = Qnil;
 
 class RubyStream : public Protocol::QUIC::BufferedStream {
-	VALUE _self;
 public:
-	RubyStream(VALUE self, VALUE connection, VALUE stream_id) : Protocol::QUIC::BufferedStream(*Protocol_QUIC_Connection_get(connection), RB_NUM2LL(stream_id)), _self(self) {}
+	VALUE self;
+	
+private:
+	VALUE _connection;
+public:
+	RubyStream(VALUE self, VALUE connection, VALUE stream_id) : Protocol::QUIC::BufferedStream(*Protocol_QUIC_Connection_get(connection), RB_NUM2LL(stream_id)), self(self), _connection(connection) {}
 	
 	virtual ~RubyStream() {}
 	
 	void mark() {
-		rb_gc_mark(_self);
+		rb_gc_mark_movable(self);
+		rb_gc_mark_movable(_connection);
+	}
+	
+	void compact() {
+		self = rb_gc_location(self);
+		_connection = rb_gc_location(_connection);
 	}
 };
 
 static void Protocol_QUIC_Stream_mark(void *data) {
 	if (data) {
 		reinterpret_cast<RubyStream *>(data)->mark();
+	}
+}
+
+static void Protocol_QUIC_Stream_compact(void *data) {
+	if (data) {
+		reinterpret_cast<RubyStream *>(data)->compact();
 	}
 }
 
@@ -46,6 +62,7 @@ const rb_data_type_t Protocol_QUIC_Stream_type = {
 		.dmark = Protocol_QUIC_Stream_mark,
 		.dfree = Protocol_QUIC_Stream_free,
 		.dsize = Protocol_QUIC_Stream_size,
+		.dcompact = Protocol_QUIC_Stream_compact,
 	},
 	.data = NULL,
 	.flags = RUBY_TYPED_FREE_IMMEDIATELY,

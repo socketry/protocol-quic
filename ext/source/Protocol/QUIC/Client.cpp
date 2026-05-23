@@ -7,36 +7,80 @@
 #include "Address.hpp"
 #include "Stream.hpp"
 
+#include <unordered_map>
+
 VALUE Protocol_QUIC_Client = Qnil;
 
 class RubyClient : public Protocol::QUIC::Client {
-	VALUE _self;
 public:
-	RubyClient(VALUE self, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE chosen_version) : Protocol::QUIC::Client(*Protocol_QUIC_Configuration_get(configuration), *Protocol_QUIC_TLS_ClientContext_get(tls_context), *Protocol_QUIC_Socket_get(socket), *Protocol_QUIC_Address_get(remote_address), RB_NUM2UINT(chosen_version)), _self(self) {}
+	VALUE self;
+	
+private:
+	VALUE _configuration;
+	VALUE _tls_context;
+	VALUE _socket;
+	VALUE _remote_address;
+	std::unordered_map<Protocol::QUIC::StreamID, VALUE> _ruby_streams;
+	
+public:
+	RubyClient(VALUE self, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE chosen_version) : Protocol::QUIC::Client(*Protocol_QUIC_Configuration_get(configuration), *Protocol_QUIC_TLS_ClientContext_get(tls_context), *Protocol_QUIC_Socket_get(socket), *Protocol_QUIC_Address_get(remote_address), RB_NUM2UINT(chosen_version)), self(self), _configuration(configuration), _tls_context(tls_context), _socket(socket), _remote_address(remote_address) {}
 	virtual ~RubyClient() {}
 	
 	void handshake_completed() override
 	{
-		rb_funcall(_self, rb_intern("handshake_completed"), 0);
+		rb_funcall(self, rb_intern("handshake_completed"), 0);
 	}
 	
 	Protocol::QUIC::Stream * create_stream(Protocol::QUIC::StreamID stream_id) override
 	{
-		VALUE stream = rb_funcall(_self, rb_intern("create_stream"), 1, RB_LL2NUM(stream_id));
-		VALUE streams = rb_ivar_get(_self, rb_intern("@streams"));
-		
-		if (NIL_P(streams)) {
-			streams = rb_ary_new();
-			rb_ivar_set(_self, rb_intern("@streams"), streams);
-		}
-		
-		rb_ary_push(streams, stream);
+		VALUE stream = rb_funcall(self, rb_intern("create_stream"), 1, RB_LL2NUM(stream_id));
+		_ruby_streams[stream_id] = stream;
 		
 		return Protocol_QUIC_Stream_get(stream);
 	}
 	
+	void disconnect() override
+	{
+		Protocol::QUIC::Client::disconnect();
+		_ruby_streams.clear();
+	}
+	
+	void stream_close(Protocol::QUIC::Stream * stream, std::int32_t flags, std::uint64_t error_code) override
+	{
+		auto stream_id = stream->stream_id();
+		Protocol::QUIC::Client::stream_close(stream, flags, error_code);
+		_ruby_streams.erase(stream_id);
+	}
+	
+	void stream_reset(Protocol::QUIC::Stream * stream, std::size_t final_size, std::uint64_t error_code) override
+	{
+		auto stream_id = stream->stream_id();
+		Protocol::QUIC::Client::stream_reset(stream, final_size, error_code);
+		_ruby_streams.erase(stream_id);
+	}
+	
 	void mark() {
-		rb_gc_mark(_self);
+		rb_gc_mark_movable(self);
+		rb_gc_mark_movable(_configuration);
+		rb_gc_mark_movable(_tls_context);
+		rb_gc_mark_movable(_socket);
+		rb_gc_mark_movable(_remote_address);
+		
+		for (auto & [stream_id, ruby_stream] : _ruby_streams) {
+			rb_gc_mark_movable(ruby_stream);
+		}
+	}
+	
+	void compact() {
+		self = rb_gc_location(self);
+		_configuration = rb_gc_location(_configuration);
+		_tls_context = rb_gc_location(_tls_context);
+		_socket = rb_gc_location(_socket);
+		_remote_address = rb_gc_location(_remote_address);
+		
+		for (auto & [stream_id, ruby_stream] : _ruby_streams) {
+			ruby_stream = rb_gc_location(ruby_stream);
+		}
 	}
 };
 
@@ -44,6 +88,13 @@ static void Protocol_QUIC_Client_mark(void *data)
 {
 	if (data) {
 		reinterpret_cast<RubyClient *>(data)->mark();
+	}
+}
+
+static void Protocol_QUIC_Client_compact(void *data)
+{
+	if (data) {
+		reinterpret_cast<RubyClient *>(data)->compact();
 	}
 }
 
@@ -64,6 +115,7 @@ static const rb_data_type_t Protocol_QUIC_Client_type = {
 		.dmark = Protocol_QUIC_Client_mark,
 		.dfree = Protocol_QUIC_Client_free,
 		.dsize = Protocol_QUIC_Client_size,
+		.dcompact = Protocol_QUIC_Client_compact,
 	},
 	.data = NULL,
 	.flags = RUBY_TYPED_FREE_IMMEDIATELY,
@@ -83,7 +135,6 @@ static VALUE Protocol_QUIC_Client_allocate(VALUE klass) {
 static VALUE Protocol_QUIC_Client_initialize(VALUE self, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE chosen_version) {
 	Protocol::QUIC::Client *client = new RubyClient(self, configuration, tls_context, socket, remote_address, chosen_version);
 	DATA_PTR(self) = client;
-	rb_ivar_set(self, rb_intern("@streams"), rb_ary_new());
 	return self;
 }
 

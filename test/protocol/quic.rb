@@ -3,8 +3,10 @@
 # Released under the MIT License.
 # Copyright, 2023, by Samuel Williams.
 
+require "protocol/quic/version"
+
 describe Protocol::QUIC do
-	it "should have a version" do
+	it "has a version" do
 		expect(Protocol::QUIC::VERSION).to be =~ /\d+\.\d+\.\d+/
 	end
 end

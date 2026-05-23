@@ -12,7 +12,7 @@ scheduler-ruby:
   :commit: 934200abb26d4ba0fe62f3aaeaef7127ff701a75
   :branch: main
 protocol-quic:
-  :commit: '08a6e696ed00f30d480b1f0d6a116ad8fcbb1f7a'
+  :commit: 4fa6aaa1b2dcb8f493d4c58535c0417e94095f27
   :branch: main
 ruby:
   :commit: 3421a91f32deb5700329b1d30bb5b6feaa39cdcc

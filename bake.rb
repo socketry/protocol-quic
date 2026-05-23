@@ -7,9 +7,13 @@ def build
 	ext_path = File.expand_path("ext", __dir__)
 	
 	Dir.chdir(ext_path) do
-		system("./extconf.rb")
-		system("make")
+		system("teapot", "fetch")
+		system("teapot", "Ruby/Protocol/QUIC")
 	end
+end
+
+def before_test
+	build
 end
 
 def clean

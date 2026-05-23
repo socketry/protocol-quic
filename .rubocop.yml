@@ -4,6 +4,8 @@ plugins:
 
 AllCops:
   DisabledByDefault: true
+  Exclude:
+    - "ext/teapot/**/*"
 
 # Socketry specific rules:
 

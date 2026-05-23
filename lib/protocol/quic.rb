@@ -6,7 +6,4 @@
 # Native extension:
 require "Protocol_QUIC"
 
-module Protocol
-	module QUIC
-	end
-end
+require_relative "quic/version"

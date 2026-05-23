@@ -3,7 +3,9 @@
 # Released under the MIT License.
 # Copyright, 2023, by Samuel Williams.
 
+# @namespace
 module Protocol
+	# @namespace
 	module QUIC
 		VERSION = "0.0.0"
 	end

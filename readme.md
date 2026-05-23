@@ -18,6 +18,8 @@ Please see the [project documentation](https://socketry.github.io/protocol-quic/
 
 Please see the [project releases](https://socketry.github.io/protocol-quic/releases/index) for all releases.
 
+### v0.0.1
+
 ## Contributing
 
 We welcome contributions to this project.

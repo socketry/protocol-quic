@@ -15,7 +15,7 @@ protocol-quic:
   :commit: 4fa6aaa1b2dcb8f493d4c58535c0417e94095f27
   :branch: main
 ruby:
-  :commit: 3421a91f32deb5700329b1d30bb5b6feaa39cdcc
+  :commit: 685cdd5a421dae7749f368d08add9aa9709ad043
   :branch: main
 generate-template:
   :commit: ad0dcfb6da64cc0508b71916b30e1050c82ecea7

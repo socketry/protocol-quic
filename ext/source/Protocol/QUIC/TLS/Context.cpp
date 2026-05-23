@@ -66,6 +66,24 @@ static VALUE Protocol_QUIC_TLS_Context_add_protocol(VALUE self, VALUE name) {
 	return self;
 }
 
+static VALUE Protocol_QUIC_TLS_Context_load_certificate_file(VALUE self, VALUE path) {
+	StringValue(path);
+	
+	auto tls_context = Protocol_QUIC_TLS_Context_get(self);
+	tls_context->load_certificate_file(RSTRING_PTR(path));
+	
+	return self;
+}
+
+static VALUE Protocol_QUIC_TLS_Context_load_private_key_file(VALUE self, VALUE path) {
+	StringValue(path);
+	
+	auto tls_context = Protocol_QUIC_TLS_Context_get(self);
+	tls_context->load_private_key_file(RSTRING_PTR(path));
+	
+	return self;
+}
+
 static VALUE Protocol_QUIC_TLS_Context_protocols(VALUE self) {
 	Protocol::QUIC::TLS::Context *tls_context;
 	TypedData_Get_Struct(self, Protocol::QUIC::TLS::Context, &Protocol_QUIC_TLS_Context_type, tls_context);
@@ -89,6 +107,8 @@ void Init_Protocol_QUIC_TLS_Context(VALUE Protocol_QUIC) {
 	rb_define_method(Protocol_QUIC_TLS_Context, "initialize", Protocol_QUIC_TLS_Context_initialize, 0);
 	
 	rb_define_method(Protocol_QUIC_TLS_Context, "add_protocol", Protocol_QUIC_TLS_Context_add_protocol, 1);
+	rb_define_method(Protocol_QUIC_TLS_Context, "load_certificate_file", Protocol_QUIC_TLS_Context_load_certificate_file, 1);
+	rb_define_method(Protocol_QUIC_TLS_Context, "load_private_key_file", Protocol_QUIC_TLS_Context_load_private_key_file, 1);
 	rb_define_method(Protocol_QUIC_TLS_Context, "protocols", Protocol_QUIC_TLS_Context_protocols, 0);
 	
 	Init_Protocol_QUIC_TLS_ClientContext(Protocol_QUIC_TLS);

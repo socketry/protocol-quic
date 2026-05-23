@@ -41,6 +41,14 @@ public:
 		ValueReference ruby_packet_header_reference(ruby_packet_header, packet_header);
 		
 		VALUE server = rb_funcall(_ruby_self, rb_intern("create_server"), 3, ruby_socket, ruby_address, ruby_packet_header);
+		VALUE servers = rb_ivar_get(_ruby_self, rb_intern("@servers"));
+		
+		if (NIL_P(servers)) {
+			servers = rb_ary_new();
+			rb_ivar_set(_ruby_self, rb_intern("@servers"), servers);
+		}
+		
+		rb_ary_push(servers, server);
 		
 		return Protocol_QUIC_Server_get(server);
 	}
@@ -96,6 +104,7 @@ static VALUE Protocol_QUIC_Dispatcher_allocate(VALUE klass) {
 
 static VALUE Protocol_QUIC_Dispatcher_initialize(VALUE self, VALUE configuration, VALUE tls_context) {
 	DATA_PTR(self) = new RubyDispatcher(self, configuration, tls_context);
+	rb_ivar_set(self, rb_intern("@servers"), rb_ary_new());
 	return self;
 }
 

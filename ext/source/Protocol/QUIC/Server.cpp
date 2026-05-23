@@ -22,6 +22,14 @@ public:
 	Protocol::QUIC::Stream * create_stream(Protocol::QUIC::StreamID stream_id) override
 	{
 		VALUE stream = rb_funcall(_self, rb_intern("create_stream"), 1, RB_LL2NUM(stream_id));
+		VALUE streams = rb_ivar_get(_self, rb_intern("@streams"));
+		
+		if (NIL_P(streams)) {
+			streams = rb_ary_new();
+			rb_ivar_set(_self, rb_intern("@streams"), streams);
+		}
+		
+		rb_ary_push(streams, stream);
 		
 		return Protocol_QUIC_Stream_get(stream);
 	}
@@ -79,6 +87,7 @@ static VALUE Protocol_QUIC_Server_initialize(VALUE self, VALUE dispatcher, VALUE
 	Protocol::QUIC::Server *server = new RubyServer(self, dispatcher, configuration, tls_context, socket, remote_address, packet_header, ocid);
 
 	DATA_PTR(self) = server;
+	rb_ivar_set(self, rb_intern("@streams"), rb_ary_new());
 
 	return self;
 }

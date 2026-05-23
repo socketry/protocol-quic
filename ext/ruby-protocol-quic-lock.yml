@@ -9,10 +9,10 @@ build-cmake:
   :commit: 6558fdad5bbb475f0fa5584ff773de8f12ff232e
   :branch: master
 scheduler-ruby:
-  :commit: 880bd7d41eb5274dcd594c19d0535509b762ce93
+  :commit: 934200abb26d4ba0fe62f3aaeaef7127ff701a75
   :branch: main
 protocol-quic:
-  :commit: a5bfe0e7481bd143d90c9c5e4c82cd7ae3a07370
+  :commit: '08a6e696ed00f30d480b1f0d6a116ad8fcbb1f7a'
   :branch: main
 ruby:
   :commit: 3421a91f32deb5700329b1d30bb5b6feaa39cdcc
@@ -30,10 +30,10 @@ variants:
   :commit: f6a26a8ac3a47a23a213cbd15da2183239d394d1
   :branch: master
 platform-darwin-osx:
-  :commit: b3abd55300d433236f97f3450fe05cab7c865214
+  :commit: dbd14d21c11e85f6fc067529a63f81cf5e6604d2
   :branch: master
 platform-darwin-ios:
-  :commit: c81ccc5ee73cb1c6ae31e378148c4cb8c9f8759e
+  :commit: d0611a1afac738012ffb7c51185499292e9a87ba
   :branch: master
 build-clang:
   :commit: 1c9be15a63c149f6decf8d0599b34755aa3b0979
@@ -51,16 +51,16 @@ executor-lldb:
   :commit: 193ba0b15c532d2745b0f0bfb05cd9581e869555
   :branch: master
 time:
-  :commit: f96b70a2676522baacaf4229f034b41a837b9ff5
+  :commit: 818c090c627da57c66bc56876b91ea74b6483bd7
   :branch: master
 nghttp3:
-  :commit: 735fd39749ec5efbaae9de62fa78538c09007b7c
+  :commit: 922c2aaca406840a63ce2c4a808d9c888538671d
   :branch: main
 ngtcp2:
-  :commit: 8cea50a8c2b57a9337fc0b3ace31c6799111bf0d
+  :commit: c65334b60a04200b1691da3d85d38444c5ff951d
   :branch: main
 picotls:
-  :commit: 57803ad4f620cfd3d4a40de7389f0980f3ca19e8
+  :commit: 2bc03af57a8ea09f3b0bd11c47c876fd3bc1d9fc
   :branch: main
 openssl:
   :commit: 2f48d686aaaf20dc6d7e8a277803657eb5951530

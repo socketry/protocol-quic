@@ -7,13 +7,25 @@ source "https://rubygems.org"
 
 gemspec
 
+gem "teapot"
+
 group :maintenance, optional: true do
 	gem "bake-gem"
 	gem "bake-modernize"
+	
+	gem "decode"
+	
+	gem "utopia-project"
 end
 
 group :test do
+	gem "sus"
+	gem "covered"
+	
+	gem "rubocop"
+	gem "rubocop-md"
+	gem "rubocop-socketry"
+	
 	gem "bake-test"
 	gem "bake-test-external"
-	gem "covered"
 end

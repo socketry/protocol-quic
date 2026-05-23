@@ -10,20 +10,21 @@ Gem::Specification.new do |spec|
 	spec.authors = ["Samuel Williams"]
 	spec.license = "MIT"
 	
-	spec.cert_chain  = ['release.cert']
-	spec.signing_key = File.expand_path('~/.gem/release.pem')
+	spec.cert_chain  = ["release.cert"]
+	spec.signing_key = File.expand_path("~/.gem/release.pem")
 	
 	spec.homepage = "https://github.com/socketry/protocol-quic"
 	
-	spec.files = Dir['{ext,lib}/**/*', '*.md', base: __dir__]
-	spec.require_paths = ['lib']
+	spec.metadata = {
+		"source_code_uri" => "https://github.com/socketry/protocol-quic.git",
+	}
+	
+	spec.files = Dir["{ext,lib}/**/*", "*.md", base: __dir__]
+	spec.require_paths = ["lib"]
 	
 	spec.extensions = ["ext/rakefile.rb"]
 	
-	spec.required_ruby_version = ">= 2.7"
+	spec.required_ruby_version = ">= 3.3"
 	
 	spec.add_dependency "teapot", "~> 3.5"
-	
-	spec.add_development_dependency "covered", "~> 0.28"
-	spec.add_development_dependency "sus", "~> 0.18"
 end

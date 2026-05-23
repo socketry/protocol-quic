@@ -1,8 +1,11 @@
-/.bundle/
-/pkg/
+/agents.md
+/.context
+/.bundle
+/pkg
 /gems.locked
 /.covered.db
 /external
+
 /ext/teapot
 /lib/Protocol_QUIC.*
 compile_commands.json

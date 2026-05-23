@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 #  This file is part of the "Teapot" project, and is released under the MIT license.
 #
@@ -19,9 +21,9 @@ define_target "ruby-protocol-quic" do |target|
 	target.depends "Build/Compile/Commands"
 	
 	target.provides "Ruby/Protocol/QUIC" do
-		source_root = target.package.path + 'source'
+		source_root = target.package.path + "source"
 		
-		library_path = build dynamic_library: "Protocol_QUIC", source_files: source_root.glob('**/*.{c,cpp}')
+		library_path = build dynamic_library: "Protocol_QUIC", source_files: source_root.glob("**/*.{c,cpp}")
 		
 		copy source: [library_path], prefix: environment[:ruby_install_path]
 		

@@ -9,10 +9,10 @@ build-cmake:
   :commit: 6558fdad5bbb475f0fa5584ff773de8f12ff232e
   :branch: master
 scheduler-ruby:
-  :commit: 8e4e36bfd47485e8379b3d9c0e4258dec63b7320
+  :commit: 94e524e64912081aaa5a8cb54bad7ad73f01a51a
   :branch: main
 protocol-quic:
-  :commit: 9900a7fe0407a2a4ae0a8e0508d6ad8d52f66c27
+  :commit: 1328f66a91ba7b3e544304dde8ba7bc93d3462ec
   :branch: main
 ruby:
   :commit: 685cdd5a421dae7749f368d08add9aa9709ad043

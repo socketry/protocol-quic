@@ -11,6 +11,20 @@
 
 VALUE Ruby_Protocol_QUIC_Socket = Qnil;
 
+static void Ruby_Protocol_QUIC_Socket_mark(void *data) {
+	if (data) {
+		auto socket = reinterpret_cast<::Protocol::QUIC::Socket *>(data);
+		socket->monitor().mark();
+	}
+}
+
+static void Ruby_Protocol_QUIC_Socket_compact(void *data) {
+	if (data) {
+		auto socket = reinterpret_cast<::Protocol::QUIC::Socket *>(data);
+		socket->monitor().compact();
+	}
+}
+
 static void Ruby_Protocol_QUIC_Socket_free(void *data) {
 	if (data) {
 		delete reinterpret_cast<::Protocol::QUIC::Socket *>(data);
@@ -24,9 +38,10 @@ static size_t Ruby_Protocol_QUIC_Socket_size(const void *data) {
 const rb_data_type_t Ruby_Protocol_QUIC_Socket_type = {
 	.wrap_struct_name = "Protocol::QUIC::Socket",
 	.function = {
-		.dmark = NULL,
+		.dmark = Ruby_Protocol_QUIC_Socket_mark,
 		.dfree = Ruby_Protocol_QUIC_Socket_free,
 		.dsize = Ruby_Protocol_QUIC_Socket_size,
+		.dcompact = Ruby_Protocol_QUIC_Socket_compact,
 	},
 	.data = NULL,
 	.flags = RUBY_TYPED_FREE_IMMEDIATELY,

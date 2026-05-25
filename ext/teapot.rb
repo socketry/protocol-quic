@@ -22,7 +22,7 @@ define_target "ruby-protocol-quic" do |target|
 	target.provides "Ruby/Protocol/QUIC" do
 		source_root = target.package.path + "source"
 		
-		library_path = build dynamic_library: "Protocol_QUIC", source_files: source_root.glob("**/*.{c,cpp}")
+		library_path = build dynamic_library: "Ruby_Protocol_QUIC", source_files: source_root.glob("**/*.{c,cpp}")
 		
 		copy source: [library_path], prefix: environment[:ruby_install_path]
 		

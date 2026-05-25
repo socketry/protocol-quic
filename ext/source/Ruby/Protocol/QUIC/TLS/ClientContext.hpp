@@ -16,11 +16,11 @@
 extern "C" {
 #endif
 
-extern VALUE Protocol_QUIC_TLS_ClientContext;
+extern VALUE Ruby_Protocol_QUIC_TLS_ClientContext;
 
-void Init_Protocol_QUIC_TLS_ClientContext(VALUE Protocol_QUIC_TLS);
+void Init_Ruby_Protocol_QUIC_TLS_ClientContext(VALUE Protocol_QUIC_TLS);
 
-Protocol::QUIC::TLS::ClientContext * Protocol_QUIC_TLS_ClientContext_get(VALUE self);
+::Protocol::QUIC::TLS::ClientContext * Ruby_Protocol_QUIC_TLS_ClientContext_get(VALUE self);
 
 #ifdef __cplusplus
 }

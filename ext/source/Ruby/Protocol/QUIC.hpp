@@ -8,7 +8,7 @@ extern "C" {
 
 extern VALUE Protocol_QUIC;
 
-void Init_Protocol_QUIC(void);
+void Init_Ruby_Protocol_QUIC(void);
 
 #ifdef __cplusplus
 }

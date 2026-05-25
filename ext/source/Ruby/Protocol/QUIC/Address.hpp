@@ -16,14 +16,14 @@
 extern "C" {
 #endif
 
-extern VALUE Protocol_QUIC_Address;
+extern VALUE Ruby_Protocol_QUIC_Address;
 
-void Init_Protocol_QUIC_Address(VALUE Protocol_QUIC);
+void Init_Ruby_Protocol_QUIC_Address(VALUE Protocol_QUIC);
 
-Protocol::QUIC::Address * Protocol_QUIC_Address_get(VALUE self);
+::Protocol::QUIC::Address * Ruby_Protocol_QUIC_Address_get(VALUE self);
 
-VALUE Protocol_QUIC_Address_allocate(VALUE klass);
-VALUE Protocol_QUIC_Address_wrap(VALUE klass, const Protocol::QUIC::Address & address);
+VALUE Ruby_Protocol_QUIC_Address_allocate(VALUE klass);
+VALUE Ruby_Protocol_QUIC_Address_wrap(VALUE klass, const ::Protocol::QUIC::Address & address);
 
 #ifdef __cplusplus
 }

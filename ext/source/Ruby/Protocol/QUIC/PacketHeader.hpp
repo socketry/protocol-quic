@@ -1,5 +1,5 @@
 //
-//  Configuration.h
+//  PacketHeader.hpp
 //  This file is part of the "Protocol::QUIC" project and released under the MIT License.
 //
 //  Created by Samuel Williams on 27/4/2023.
@@ -10,17 +10,19 @@
 
 #include <ruby.h>
 
-#include <Protocol/QUIC/Configuration.hpp>
+#include <ngtcp2/ngtcp2.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern VALUE Protocol_QUIC_Configuration;
+extern VALUE Ruby_Protocol_QUIC_PacketHeader;
 
-void Init_Protocol_QUIC_Configuration(VALUE Protocol_QUIC);
+void Init_Ruby_Protocol_QUIC_PacketHeader(VALUE Protocol_QUIC);
 
-Protocol::QUIC::Configuration * Protocol_QUIC_Configuration_get(VALUE self);
+ngtcp2_pkt_hd * Ruby_Protocol_QUIC_PacketHeader_get(VALUE self);
+
+VALUE Ruby_Protocol_QUIC_PacketHeader_allocate(VALUE klass);
 
 #ifdef __cplusplus
 }

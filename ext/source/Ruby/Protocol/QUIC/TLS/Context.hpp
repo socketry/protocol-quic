@@ -1,5 +1,5 @@
 //
-//  ServerContext.h
+//  Context.h
 //  This file is part of the "Protocol::QUIC" project and released under the MIT License.
 //
 //  Created by Samuel Williams on 27/4/2023.
@@ -10,17 +10,17 @@
 
 #include <ruby.h>
 
-#include <Protocol/QUIC/TLS/ServerContext.hpp>
+#include <Protocol/QUIC/TLS/Context.hpp>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern VALUE Protocol_QUIC_TLS_ServerContext;
+extern VALUE Ruby_Protocol_QUIC_TLS_Context;
 
-void Init_Protocol_QUIC_TLS_ServerContext(VALUE Protocol_QUIC_TLS);
+extern const rb_data_type_t Ruby_Protocol_QUIC_TLS_Context_type;
 
-Protocol::QUIC::TLS::ServerContext * Protocol_QUIC_TLS_ServerContext_get(VALUE self);
+void Init_Ruby_Protocol_QUIC_TLS_Context(VALUE Protocol_QUIC);
 
 #ifdef __cplusplus
 }

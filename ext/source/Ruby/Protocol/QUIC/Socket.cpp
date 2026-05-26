@@ -104,6 +104,13 @@ static VALUE Ruby_Protocol_QUIC_Socket_connect(VALUE self, VALUE address) {
 	);
 }
 
+static VALUE Ruby_Protocol_QUIC_Socket_close(VALUE self) {
+	auto socket = Ruby_Protocol_QUIC_Socket_get(self);
+	socket->close();
+	
+	return Qnil;
+}
+
 void Init_Ruby_Protocol_QUIC_Socket(VALUE Protocol_QUIC) {
 	Ruby_Protocol_QUIC_Socket = rb_define_class_under(Protocol_QUIC, "Socket", rb_cObject);
 	
@@ -115,4 +122,5 @@ void Init_Ruby_Protocol_QUIC_Socket(VALUE Protocol_QUIC) {
 	
 	rb_define_method(Ruby_Protocol_QUIC_Socket, "bind", Ruby_Protocol_QUIC_Socket_bind, 1);
 	rb_define_method(Ruby_Protocol_QUIC_Socket, "connect", Ruby_Protocol_QUIC_Socket_connect, 1);
+	rb_define_method(Ruby_Protocol_QUIC_Socket, "close", Ruby_Protocol_QUIC_Socket_close, 0);
 }

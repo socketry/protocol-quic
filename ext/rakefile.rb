@@ -14,7 +14,7 @@ task :default do
 	bundle_environment = {"BUNDLE_GEMFILE" => BUILD_GEMFILE}
 	build_environment = bundle_environment.merge("RUBYLIBDIR" => ruby_library_directory)
 	
-	sh bundle_environment, *BUNDLE, "install"
+	sh bundle_environment, *BUNDLE, "install", "--no-lock"
 	sh build_environment, *BUNDLE, "exec", "teapot", "fetch"
 	sh build_environment, *BUNDLE, "exec", "teapot", "Ruby/Protocol/QUIC"
 end

@@ -7,6 +7,6 @@
 module Protocol
 	# @namespace
 	module QUIC
-		VERSION = "0.0.9"
+		VERSION = "0.0.10"
 	end
 end

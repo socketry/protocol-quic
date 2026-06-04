@@ -6,7 +6,7 @@
 require "rbconfig"
 require "rubygems"
 
-TEAPOT = [RbConfig.ruby, Gem.bin_path("teapot", "teapot")]
+TEAPOT = [RbConfig.ruby, "-rrubygems", "-e", "load Gem.activate_bin_path('teapot', 'teapot')", "--"]
 
 task :default do
 	ruby_library_directory = ENV.fetch("RUBYLIBDIR"){ENV.fetch("RUBYARCHDIR")}

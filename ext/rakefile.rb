@@ -6,15 +6,12 @@
 require "rbconfig"
 require "rubygems"
 
-BUILD_GEMFILE = File.expand_path("gems.rb", __dir__)
-BUNDLE = [RbConfig.ruby, Gem.bin_path("bundler", "bundle")]
+TEAPOT = [RbConfig.ruby, Gem.bin_path("teapot", "teapot")]
 
 task :default do
 	ruby_library_directory = ENV.fetch("RUBYLIBDIR"){ENV.fetch("RUBYARCHDIR")}
-	bundle_environment = {"BUNDLE_GEMFILE" => BUILD_GEMFILE}
-	build_environment = bundle_environment.merge("RUBYLIBDIR" => ruby_library_directory)
+	build_environment = {"RUBYLIBDIR" => ruby_library_directory}
 	
-	sh bundle_environment, *BUNDLE, "install", "--no-lock"
-	sh build_environment, *BUNDLE, "exec", "teapot", "fetch"
-	sh build_environment, *BUNDLE, "exec", "teapot", "Ruby/Protocol/QUIC"
+	sh build_environment, *TEAPOT, "fetch"
+	sh build_environment, *TEAPOT, "Ruby/Protocol/QUIC"
 end

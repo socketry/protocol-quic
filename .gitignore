@@ -8,5 +8,6 @@
 
 /ext/teapot
 /lib/Protocol_QUIC.*
+/lib/Ruby_Protocol_QUIC.bundle
 compile_commands.json
 .cache

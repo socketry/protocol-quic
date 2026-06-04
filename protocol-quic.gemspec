@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 		"funding_uri" => "https://github.com/sponsors/ioquatix",
 	}
 	
-	spec.files = Dir["{ext,lib}/**/*", "*.md", base: __dir__]
+	spec.files = Dir["lib/**/*.rb", "ext/source/**/*.{cpp,hpp}", "*.md", "ext/rakefile.rb", "ext/teapot.rb", "ext/*-lock.yml", base: __dir__]
 	spec.require_paths = ["lib"]
 	
 	spec.extensions = ["ext/rakefile.rb"]

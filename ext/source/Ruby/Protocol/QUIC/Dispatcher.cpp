@@ -11,6 +11,7 @@
 #include "Server.hpp"
 
 #include "Reference.hpp"
+#include "Callback.hpp"
 
 #include <unordered_map>
 
@@ -60,7 +61,11 @@ namespace Ruby::Protocol::QUIC {
 			VALUE ruby_packet_header = Ruby_Protocol_QUIC_PacketHeader_allocate(Ruby_Protocol_QUIC_PacketHeader);
 			ValueReference ruby_packet_header_reference(ruby_packet_header, packet_header);
 		
-			VALUE server = rb_funcall(self, rb_intern("create_server"), 3, ruby_socket, ruby_address, ruby_packet_header);
+			VALUE arguments[3] = {ruby_socket, ruby_address, ruby_packet_header};
+			VALUE server = protected_call(self, "create_server", 3, arguments);
+			
+			if (NIL_P(server)) throw std::runtime_error("create_server returned nil");
+			
 			auto native_server = Ruby_Protocol_QUIC_Server_get(server);
 		
 			_ruby_servers[native_server] = server;
@@ -175,9 +180,10 @@ static VALUE Ruby_Protocol_QUIC_Dispatcher_tls_context(VALUE self) {
 static VALUE Ruby_Protocol_QUIC_Dispatcher_listen(VALUE self, VALUE socket) {
 	auto dispatcher = dynamic_cast<Ruby::Protocol::QUIC::Dispatcher*>(Ruby_Protocol_QUIC_Dispatcher_get(self));
 	
-	dispatcher->listen(socket);
-	
-	return Qnil;
+	return Ruby::Protocol::QUIC::guard([&]{
+		dispatcher->listen(socket);
+		return Qnil;
+	});
 }
 
 void Init_Ruby_Protocol_QUIC_Dispatcher(VALUE Protocol_QUIC) {

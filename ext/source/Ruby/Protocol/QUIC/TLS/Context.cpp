@@ -7,6 +7,7 @@
 //
 
 #include "Context.hpp"
+#include "../Connection.hpp"
 
 #include "ClientContext.hpp"
 #include "ServerContext.hpp"
@@ -15,7 +16,8 @@ VALUE Ruby_Protocol_QUIC_TLS_Context = Qnil;
 
 static void Ruby_Protocol_QUIC_TLS_Context_free(void *data) {
 	if (data) {
-		delete reinterpret_cast<::Protocol::QUIC::TLS::Context *>(data);
+		// Deferred while connections still use it; see Ruby::Protocol::QUIC::release_context.
+		Ruby::Protocol::QUIC::release_context(reinterpret_cast<::Protocol::QUIC::TLS::Context *>(data));
 	}
 }
 

@@ -10,6 +10,7 @@
 #include "PacketHeader.hpp"
 
 #include "Stream.hpp"
+#include "Callback.hpp"
 
 #include <unordered_map>
 
@@ -17,7 +18,7 @@ VALUE Ruby_Protocol_QUIC_Server = Qnil;
 
 namespace Ruby::Protocol::QUIC {
 
-	class Server : public ::Protocol::QUIC::Server {
+	class Server : public ::Protocol::QUIC::Server, public StreamOwner {
 	public:
 		VALUE self;
 	
@@ -29,13 +30,29 @@ namespace Ruby::Protocol::QUIC {
 		VALUE _remote_address;
 		std::unordered_map<::Protocol::QUIC::StreamID, VALUE> _ruby_streams;
 	
+		static bool remote_bidirectional(::Protocol::QUIC::StreamID stream_id)
+		{
+			// Client-initiated bidirectional streams have the two least significant bits 0b00 (RFC 9000 §2.1).
+			return (stream_id & 0x3) == 0;
+		}
+	
 	public:
-		Server(VALUE self, VALUE dispatcher, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE packet_header, VALUE ocid) : ::Protocol::QUIC::Server(*Ruby_Protocol_QUIC_Dispatcher_get(dispatcher), *Ruby_Protocol_QUIC_Configuration_get(configuration), *Ruby_Protocol_QUIC_TLS_ServerContext_get(tls_context), *Ruby_Protocol_QUIC_Socket_get(socket), *Ruby_Protocol_QUIC_Address_get(remote_address), *Ruby_Protocol_QUIC_PacketHeader_get(packet_header), nullptr), self(self), _dispatcher(dispatcher), _configuration(configuration), _tls_context(tls_context), _socket(socket), _remote_address(remote_address) {}
+		Server(VALUE self, VALUE dispatcher, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE packet_header, VALUE ocid) : ::Protocol::QUIC::Server(*Ruby_Protocol_QUIC_Dispatcher_get(dispatcher), *Ruby_Protocol_QUIC_Configuration_get(configuration), *Ruby_Protocol_QUIC_TLS_ServerContext_get(tls_context), *Ruby_Protocol_QUIC_Socket_get(socket), *Ruby_Protocol_QUIC_Address_get(remote_address), *Ruby_Protocol_QUIC_PacketHeader_get(packet_header), nullptr), self(self), _dispatcher(dispatcher), _configuration(configuration), _tls_context(tls_context), _socket(socket), _remote_address(remote_address)
+		{
+			// In the body, after the base class has been constructed, so that a constructor that throws never leaves the context counted:
+			StreamOwner::tls_context = Ruby_Protocol_QUIC_TLS_ServerContext_get(tls_context);
+			retain_context(StreamOwner::tls_context);
+		}
+		
 		virtual ~Server() {}
 	
 		::Protocol::QUIC::Stream * create_stream(::Protocol::QUIC::StreamID stream_id) override
 		{
-			VALUE stream = rb_funcall(self, rb_intern("create_stream"), 1, RB_LL2NUM(stream_id));
+			VALUE argument = RB_LL2NUM(stream_id);
+			VALUE stream = protected_call(self, "create_stream", 1, &argument);
+			
+			if (NIL_P(stream)) throw std::runtime_error("create_stream returned nil");
+			
 			_ruby_streams[stream_id] = stream;
 		
 			return Ruby_Protocol_QUIC_Stream_get(stream);
@@ -47,18 +64,34 @@ namespace Ruby::Protocol::QUIC {
 			_ruby_streams.clear();
 		}
 	
+		// The idle timeout is a silent close (RFC 9000 §10.1): do not try to send CONNECTION_CLOSE, which would fail.
+		Status handle_error(int result, std::string_view reason = "") override
+		{
+			if (result == NGTCP2_ERR_IDLE_CLOSE) {
+				set_last_error(result, reason);
+				disconnect();
+				return Status::DRAINING;
+			}
+			
+			return ::Protocol::QUIC::Server::handle_error(result, reason);
+		}
+
 		void stream_close(::Protocol::QUIC::Stream * stream, std::int32_t flags, std::uint64_t error_code) override
 		{
 			auto stream_id = stream->stream_id();
 			::Protocol::QUIC::Server::stream_close(stream, flags, error_code);
 			_ruby_streams.erase(stream_id);
+			
+			// ngtcp2 does not raise the stream limit by itself; allow the client to open a new stream for each one that is closed.
+			if (remote_bidirectional(stream_id)) {
+				ngtcp2_conn_extend_max_streams_bidi(_connection, 1);
+			}
 		}
 	
+		// Unlike the base class, keep the stream registered after RESET_STREAM: ngtcp2 still calls `stream_close` for it later, and the base class would fail to find it then.
 		void stream_reset(::Protocol::QUIC::Stream * stream, std::size_t final_size, std::uint64_t error_code) override
 		{
-			auto stream_id = stream->stream_id();
-			::Protocol::QUIC::Server::stream_reset(stream, final_size, error_code);
-			_ruby_streams.erase(stream_id);
+			stream->reset(final_size, error_code);
 		}
 	
 		void mark() {
@@ -107,7 +140,7 @@ static void Ruby_Protocol_QUIC_Server_compact(void *data)
 static void Ruby_Protocol_QUIC_Server_free(void *data)
 {
 	if (data) {
-		delete reinterpret_cast<::Protocol::QUIC::Server *>(data);
+		Ruby::Protocol::QUIC::release_connection(reinterpret_cast<Ruby::Protocol::QUIC::Server *>(data));
 	}
 }
 
@@ -143,19 +176,19 @@ static VALUE Ruby_Protocol_QUIC_Server_allocate(VALUE klass) {
 
 // Dispatcher & dispatcher, Configuration & configuration, TLS::ServerContext & tls_context, Socket & socket, const Address & remote_address, const ngtcp2_pkt_hd & packet_header, ngtcp2_cid *ocid = nullptr
 static VALUE Ruby_Protocol_QUIC_Server_initialize(VALUE self, VALUE dispatcher, VALUE configuration, VALUE tls_context, VALUE socket, VALUE remote_address, VALUE packet_header, VALUE ocid) {
-	::Protocol::QUIC::Server *server = new Ruby::Protocol::QUIC::Server(self, dispatcher, configuration, tls_context, socket, remote_address, packet_header, ocid);
-
-	DATA_PTR(self) = server;
-
-	return self;
+	return Ruby::Protocol::QUIC::guard([&]{
+		DATA_PTR(self) = new Ruby::Protocol::QUIC::Server(self, dispatcher, configuration, tls_context, socket, remote_address, packet_header, ocid);
+		return self;
+	});
 }
 
 static VALUE Ruby_Protocol_QUIC_Server_send_packets(VALUE self) {
 	::Protocol::QUIC::Server *server = Ruby_Protocol_QUIC_Server_get(self);
 	
-	server->send_packets();
-	
-	return Qnil;
+	return Ruby::Protocol::QUIC::guard([&]{
+		server->send_packets();
+		return Qnil;
+	});
 }
 
 void Init_Ruby_Protocol_QUIC_Server(VALUE Protocol_QUIC) {

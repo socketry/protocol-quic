@@ -8,12 +8,14 @@
 
 #include "ServerContext.hpp"
 #include "Context.hpp"
+#include "../Connection.hpp"
 
 VALUE Ruby_Protocol_QUIC_TLS_ServerContext = Qnil;
 
 static void Ruby_Protocol_QUIC_TLS_ServerContext_free(void *data) {
 	if (data) {
-		delete reinterpret_cast<::Protocol::QUIC::TLS::ServerContext *>(data);
+		// Deferred while connections still use it; see Ruby::Protocol::QUIC::release_context.
+		Ruby::Protocol::QUIC::release_context(reinterpret_cast<::Protocol::QUIC::TLS::ServerContext *>(data));
 	}
 }
 
